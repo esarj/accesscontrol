@@ -1,4 +1,4 @@
-import { Access, IAccessInfo, Query, IQueryInfo, Permission } from './core';
+import { Access, IAccessInfo, Query, IQueryInfo, Permission, GrantList, IGrantObject } from './core';
 /**
  *  @classdesc
  *  AccessControl class that implements RBAC (Role-Based Access Control) basics
@@ -108,10 +108,10 @@ declare class AccessControl {
      *  Initializes a new instance of `AccessControl` with the given grants.
      *  @ignore
      *
-     *  @param {Object|Array} [grants] - A list containing the access grant
+     *  @param {GrantList | IGrantObject} [grants] - A list containing the access grant
      *      definitions. See the structure of this object in the examples.
      */
-    constructor(grants?: any);
+    constructor(grants?: GrantList | IGrantObject);
     /**
      *  Specifies whether the underlying grants object is frozen and all
      *  functionality for modifying it is disabled.
@@ -163,13 +163,13 @@ declare class AccessControl {
      *    }
      *  }
      */
-    getGrants(): any;
+    getGrants(): IGrantObject;
     /**
      *  Sets all access grants at once, from an object or array. Note that this
      *  will reset the object and remove all previous grants.
      *  @chainable
      *
-     *  @param {Object|Array} grantsObject - A list containing the access grant
+     *  @param {GrantList | IGrantObject} grantsObject - A list containing the access grant
      *         definitions.
      *
      *  @returns {AccessControl} - `AccessControl` instance for chaining.
@@ -177,7 +177,7 @@ declare class AccessControl {
      *  @throws {AccessControlError} - If called after `.lock()` is called or if
      *  passed grants object fails inspection.
      */
-    setGrants(grantsObject: any): AccessControl;
+    setGrants(grantsObject: GrantList | IGrantObject): AccessControl;
     /**
      *  Resets the internal grants object and removes all previous grants.
      *  @chainable
