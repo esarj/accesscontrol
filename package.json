@@ -1,5 +1,5 @@
 {
-  "name": "accesscontrol",
+  "name": "@esarj/accesscontrol",
   "version": "2.2.1",
   "description": "Role and Attribute based Access Control for Node.js",
   "main": "./index.js",
