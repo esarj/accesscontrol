@@ -2,6 +2,7 @@
 
 ### [UNRELEASED] (2021-05-10)
 
+- **Added** `tslint` dev dependency.
 - **Updated** `coveralls`, `synk` and `notation` dependencies.
 - **Fixed** `package-lock.json` errors.
 
