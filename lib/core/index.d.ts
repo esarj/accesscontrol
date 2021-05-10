@@ -1,6 +1,6 @@
 export * from './AccessControlError';
 export * from './IAccessInfo';
-export * from './IGrantList';
+export * from './GrantList';
 export * from './IGrantListItem';
 export * from './IGrantObject';
 export * from './Access';
