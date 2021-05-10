@@ -1,5 +1,14 @@
-import { Access, IAccessInfo, Query, IQueryInfo, Permission, AccessControlError } from './core';
-import { Action, Possession, actions, possessions } from './enums';
+import {
+    Access,
+    IAccessInfo,
+    Query,
+    IQueryInfo,
+    Permission,
+    AccessControlError,
+    GrantList,
+    IGrantObject
+} from './core';
+import { Action, Possession } from './enums';
 import { utils, ERR_LOCK } from './utils';
 
 /**
@@ -114,10 +123,10 @@ class AccessControl {
      *  Initializes a new instance of `AccessControl` with the given grants.
      *  @ignore
      *
-     *  @param {Object|Array} [grants] - A list containing the access grant
+     *  @param {GrantList | IGrantObject} [grants] - A list containing the access grant
      *      definitions. See the structure of this object in the examples.
      */
-    constructor(grants?: any) {
+    constructor(grants?: GrantList | IGrantObject) {
         // explicit undefined is not allowed
         if (arguments.length === 0) grants = {};
         this.setGrants(grants);
@@ -185,7 +194,7 @@ class AccessControl {
      *    }
      *  }
      */
-    getGrants(): any {
+    getGrants(): IGrantObject {
         return this._grants;
     }
 
@@ -194,7 +203,7 @@ class AccessControl {
      *  will reset the object and remove all previous grants.
      *  @chainable
      *
-     *  @param {Object|Array} grantsObject - A list containing the access grant
+     *  @param {GrantList | IGrantObject} grantsObject - A list containing the access grant
      *         definitions.
      *
      *  @returns {AccessControl} - `AccessControl` instance for chaining.
@@ -202,7 +211,7 @@ class AccessControl {
      *  @throws {AccessControlError} - If called after `.lock()` is called or if
      *  passed grants object fails inspection.
      */
-    setGrants(grantsObject: any): AccessControl {
+    setGrants(grantsObject: GrantList | IGrantObject): AccessControl {
         if (this.isLocked) throw new AccessControlError(ERR_LOCK);
         this._grants = utils.getInspectedGrants(grantsObject);
         return this;

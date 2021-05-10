@@ -3,6 +3,7 @@
 ### [UNRELEASED] (2021-05-10)
 
 - **Added** `tslint` dev dependency.
+- **Added** `GrantList` type and `IGrantListItem`, `IGrantObject` interfaces.
 - **Updated** `coveralls`, `synk` and `notation` dependencies.
 - **Fixed** `package-lock.json` errors.
 
