@@ -8,7 +8,7 @@ import { Action, Possession } from '../enums';
 export interface IGrantListItem {
     role: string | string[];
     resource: string | string[];
-    action: typeof Action;
-    possession?: typeof Possession;
+    action: typeof Action[keyof typeof Action];
+    possession?: typeof Possession[keyof typeof Possession];
     attributes?: string | string[];
 }
