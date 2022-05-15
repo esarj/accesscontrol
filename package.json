@@ -13,6 +13,18 @@
     "LICENSE"
   ],
   "types": "./lib/index.d.ts",
+  "engines": {
+    "node": ">=12",
+    "npm": "^8.1.0"
+  },
+  "esarj": {
+    "type": "module",
+    "dependencies": {},
+    "devDependencies": {
+      "eslint-config": "*",
+      "tsconfig": "*"
+    }
+  },
   "scripts": {
     "vuls": "snyk test",
     "deps": "npm-check -u && snyk test",

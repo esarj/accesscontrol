@@ -1,45 +1,21 @@
 {
-    "compileOnSave": false,
+    "extends": "@esarj/tsconfig",
     "compilerOptions": {
-        "declaration": true,
-        "declarationDir": "./lib",
-        "target": "es5",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "removeComments": false,
-        "noLib": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "lib": ["es6", "es2015", "dom"],
-        "sourceMap": false,
-        "pretty": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "allowJs": false, // cannot be true when decleration is true
-        "noImplicitAny": false,
-        "suppressImplicitAnyIndexErrors": true,
-        "noImplicitReturns": true,
-        "noImplicitUseStrict": false,
-        "noFallthroughCasesInSwitch": true,
-        "typeRoots": [
-            "./node_modules/@types",
-            "./node_modules"
-        ],
+        "baseUrl": ".",
+        "declarationDir": "lib",
+        "outDir": "lib",
         "types": [
-            "node"
+            "node",
+            "jest"
         ],
-        "outDir": "./lib"
+        "typeRoots": [
+            "node_modules/@types",
+            "node_modules"
+        ]
     },
     "include": [
-        "./src/**/*.ts"
-    ],
-    "exclude": [
-        "./node_modules",
-        "./lib",
-        "./dev",
-        "./docs",
-        "./test",
-        "./tasks",
-        "./backup"
+        // tsconfig.build.json only includes src/ dir.
+        "src/**/*.ts",
+        "test/**/*.ts"
     ]
 }
