@@ -35,85 +35,83 @@ import { utils } from '../utils.js';
  */
 export class Permission {
 
-  /**
-   * @private
-   */
-  private _: {
-    roles: string[];
-    resource: string;
-    attributes: string[];
-  };
-
-  /**
-   * Initializes a new `Permission` instance.
-   * @private
-   *
-   * @param query - An `IQueryInfo` arbitrary object.
-   */
-  constructor(grants: IGrants, query: IQueryInfo) {
-    // getUnionAttrsOfRoles() also validates the `query` object.
-    this._ = {
-      attributes: utils.getUnionAttrsOfRoles(grants, query),
-      roles: utils.toStringArray(query.role),
-      resource: query.resource ?? '',
+    /**
+     * @private
+     */
+    private _: {
+        roles: string[];
+        resource: string;
+        attributes: string[];
     };
-  }
 
-  /**
-   * Specifies the roles for which the permission is queried for.
-   * Even if the permission is queried for a single role, this will still
-   * return an array.
-   *
-   * If the returned array has multiple roles, this does not necessarily mean
-   * that the queried permission is granted or denied for each and all roles.
-   * Note that when a permission is queried for multiple roles, attributes
-   * are unioned (merged) for all given roles. This means "at least one of
-   * these roles" have the permission for this action and resource attribute.
-   */
-  get roles(): string[] {
-    return this._.roles;
-  }
+    /**
+     * Initializes a new `Permission` instance.
+     * @private
+     *
+     * @param query - An `IQueryInfo` arbitrary object.
+     */
+    constructor(grants: IGrants, query: IQueryInfo) {
+    // getUnionAttrsOfRoles() also validates the `query` object.
+        this._ = {
+            attributes: utils.getUnionAttrsOfRoles(grants, query),
+            roles: utils.toStringArray(query.role),
+            resource: query.resource ?? ''
+        };
+    }
 
-  /**
-   * Specifies the target resource for which the permission is queried for.
-   */
-  get resource(): string {
-    return this._.resource;
-  }
+    /**
+     * Specifies the roles for which the permission is queried for.
+     * Even if the permission is queried for a single role, this will still
+     * return an array.
+     *
+     * If the returned array has multiple roles, this does not necessarily mean
+     * that the queried permission is granted or denied for each and all roles.
+     * Note that when a permission is queried for multiple roles, attributes
+     * are unioned (merged) for all given roles. This means "at least one of
+     * these roles" have the permission for this action and resource attribute.
+     */
+    get roles(): string[] {
+        return this._.roles;
+    }
 
-  /**
-   * Gets an array of allowed attributes which are defined via
-   * Glob notation. If access is not granted, this will be an empty array.
-   *
-   * Note that when a permission is queried for multiple roles, attributes
-   * are unioned (merged) for all given roles. This means "at least one of
-   * these roles" have the permission for this action and resource attribute.
-   */
-  get attributes(): string[] {
-    return this._.attributes;
-  }
+    /**
+     * Specifies the target resource for which the permission is queried for.
+     */
+    get resource(): string {
+        return this._.resource;
+    }
 
-  /**
-   * Specifies whether the permission is granted. If `true`, this means at
-   * least one attribute of the target resource is allowed.
-   */
-  get granted(): boolean {
-    if (!this.attributes || this.attributes.length === 0) return false;
-    // just one non-negated attribute is enough.
-    return this.attributes.some((attr: string) => {
-      return attr.trim().slice(0, 1) !== '!';
-    });
-  }
+    /**
+     * Gets an array of allowed attributes which are defined via
+     * Glob notation. If access is not granted, this will be an empty array.
+     *
+     * Note that when a permission is queried for multiple roles, attributes
+     * are unioned (merged) for all given roles. This means "at least one of
+     * these roles" have the permission for this action and resource attribute.
+     */
+    get attributes(): string[] {
+        return this._.attributes;
+    }
 
-  /**
-   * Filters the given data object (or array of objects) by the permission
-   * attributes and returns this data with allowed attributes.
-   * @param data - Data object to be filtered. Either a single object or array
-   * of objects.
-   * @returns - The filtered data object.
-   */
-  filter(data: UnknownObject | UnknownObject[]): UnknownObject | UnknownObject[] {
-    return utils.filterAll(data, this.attributes);
-  }
+    /**
+     * Specifies whether the permission is granted. If `true`, this means at
+     * least one attribute of the target resource is allowed.
+     */
+    get granted(): boolean {
+        if (!this.attributes || this.attributes.length === 0) return false;
+        // just one non-negated attribute is enough.
+        return this.attributes.some((attr: string) => attr.trim().slice(0, 1) !== '!');
+    }
+
+    /**
+     * Filters the given data object (or array of objects) by the permission
+     * attributes and returns this data with allowed attributes.
+     * @param data - Data object to be filtered. Either a single object or array
+     * of objects.
+     * @returns - The filtered data object.
+     */
+    filter(data: UnknownObject | UnknownObject[]): UnknownObject | UnknownObject[] {
+        return utils.filterAll(data, this.attributes);
+    }
 
 }
