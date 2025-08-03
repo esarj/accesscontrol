@@ -601,7 +601,7 @@ export class AccessControl {
     /**
      * @private
      */
-    _removePermission(resources: string | string[], roles?: string | string[], actionPossession?: string) {
+    _removePermission(resources: string | string[], roles?: string | string[], actionPossession?: string): void {
         resources = utils.toStringArray(resources);
         // resources is set but returns empty array.
         if (resources.length === 0 || !utils.isFilledStringArray(resources)) {
