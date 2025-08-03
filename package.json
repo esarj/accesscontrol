@@ -12,6 +12,28 @@
     "lib",
     "LICENSE"
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./AccessControl": {
+      "types": "./lib/AccessControl.d.ts",
+      "import": "./lib/AccessControl.js"
+    },
+    "./core": {
+      "types": "./lib/core/index.d.ts",
+      "import": "./lib/core/index.js"
+    },
+    "./enums": {
+      "types": "./lib/enums/index.d.ts",
+      "import": "./lib/enums/index.js"
+    },
+    "./utils": {
+      "types": "./lib/utils.d.ts",
+      "import": "./lib/utils.js"
+    }
+  },
   "types": "./lib/index.d.ts",
   "engines": {
     "node": ">=22",
@@ -29,7 +51,9 @@
     "vuls": "snyk test",
     "deps": "npm-check -u && snyk test",
     "clean": "rimraf ./lib",
-    "build": "npm run clean && mkdirp ./lib && tsc",
+    "lint": "eslint --ext .ts src",
+    "lint:fix": "npm run lint -- --fix",
+    "build": "npm run clean && npm run lint && mkdirp ./lib && tsc",
     "test": "npm run build && jest --verbose --no-cache",
     "test!": "jest --verbose --no-cache",
     "cover": "npm run build && jest --coverage --verbose --no-cache",
