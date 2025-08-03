@@ -297,7 +297,7 @@ export class AccessControl {
             delete this._grants[roleName];
         });
         // also remove these roles from $extend list of each remaining role.
-        utils.eachRole(this._grants, (roleItem: IGrantsItem, roleName: string) => {
+        utils.eachRole(this._grants, (roleItem: IGrantsItem, _roleName: string) => {
             if (Array.isArray(roleItem.$extend)) {
                 roleItem.$extend = utils.subtractArray(roleItem.$extend, rolesToRemove);
             }
@@ -614,7 +614,7 @@ export class AccessControl {
                 throw new AccessControlError(`Invalid role(s): ${JSON.stringify(roles)}`);
             }
         }
-        utils.eachRoleResource(this._grants, (role: string, resource: string, resourceInfo: IActionAttributes) => {
+        utils.eachRoleResource(this._grants, (role: string, resource: string, _resourceInfo: IActionAttributes) => {
             if (resources.indexOf(resource) >= 0
         // roles is optional. so remove if role is not defined.
         // if defined, check if the current role is in the list.

@@ -370,7 +370,7 @@ export const utils = {
     getResources(grants: IGrants): string[] {
     // using an object for unique list
         const resources: UnknownObject = {};
-        utils.eachRoleResource(grants, (role: string, resource: string, resourceInfo: IActionAttributes) => {
+        utils.eachRoleResource(grants, (role: string, resource: string, _resourceInfo: IActionAttributes) => {
             resources[resource] = null;
         });
         return Object.keys(resources);
