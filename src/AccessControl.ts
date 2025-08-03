@@ -7,9 +7,9 @@ import {
     AccessControlError,
     GrantList,
     IGrantObject
-} from './core';
-import { Action, Possession } from './enums';
-import { utils, ERR_LOCK } from './utils';
+} from './core/index.js';
+import { Action, Possession } from './enums/index.js';
+import { utils, ERR_LOCK } from './utils.js';
 
 /**
  *  @classdesc
@@ -129,7 +129,7 @@ class AccessControl {
     constructor(grants?: GrantList | IGrantObject) {
         // explicit undefined is not allowed
         if (arguments.length === 0) grants = {};
-        this.setGrants(grants);
+        this.setGrants(grants || {});
     }
 
     // -------------------------------
