@@ -652,7 +652,10 @@ export const utils = {
             // cross-inherited role, if found.
             const crossInherited = utils.getCrossExtendingRole(grants, roleName, arrExtRoles);
             if (crossInherited) {
-                throw new AccessControlError(`Cross inheritance is not allowed. Role "${crossInherited}" already extends "${roleName}".`);
+                throw new AccessControlError(
+                    `Cross inheritance is not allowed. Role "${crossInherited}" already ` +
+                    `extends "${roleName}".`
+                );
             }
 
             utils.validName(roleName); // throws if false
