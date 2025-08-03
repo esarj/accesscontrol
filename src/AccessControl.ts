@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-prototype-builtins */
 import {
     Access,
