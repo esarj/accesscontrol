@@ -18,7 +18,9 @@ const helper = {
             expect(err instanceof AccessControlError).toEqual(true);
             expect(AccessControl.isAccessControlError(err)).toEqual(true);
             expect(AccessControl.isACError(err)).toEqual(true); // alias test
-            if (errMsg) expect(err.message).toContain(errMsg);
+            if (errMsg && typeof err === 'object' && err !== null && 'message' in err && typeof (err as any).message === 'string') {
+                expect((err as any).message).toContain(errMsg);
+            }
         }
     }
 

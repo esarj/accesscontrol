@@ -6,8 +6,8 @@
  *  @static
  */
 class AccessControlError extends Error {
-    public name:string = 'AccessControlError';
-    constructor(public message:string = '') {
+    public override name:string = 'AccessControlError';
+    constructor(public override message:string = '') {
 
         super(message)/* istanbul ignore next */;
         // https://github.com/gotwarlost/istanbul/issues/690

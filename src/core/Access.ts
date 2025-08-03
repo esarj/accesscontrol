@@ -1,7 +1,7 @@
-import { AccessControl } from '../';
-import { IAccessInfo, AccessControlError } from '../core';
-import { Action, Possession, actions, possessions } from '../enums';
-import { utils } from '../utils';
+import { AccessControl } from '../index.js';
+import { IAccessInfo, AccessControlError } from '../core/index.js';
+import { Action, Possession } from '../enums/index.js';
+import { utils } from '../utils.js';
 
 /**
  *  Represents the inner `Access` class that helps build an access information
@@ -59,14 +59,16 @@ class Access {
         if (typeof roleOrInfo === 'string' || Array.isArray(roleOrInfo)) {
             this.role(roleOrInfo);
         } else if (utils.type(roleOrInfo) === 'object') {
-            if (Object.keys(roleOrInfo).length === 0) {
+            if (roleOrInfo && Object.keys(roleOrInfo).length === 0) {
                 throw new AccessControlError('Invalid IAccessInfo: {}');
             }
             // if an IAccessInfo instance is passed and it has 'action' defined, we
             // should directly commit it to grants.
-            roleOrInfo.denied = denied;
-            this._ = utils.resetAttributes(roleOrInfo);
-            if (utils.isInfoFulfilled(this._)) utils.commitToGrants(this._grants, this._, true);
+            if (roleOrInfo) {
+                roleOrInfo.denied = denied;
+                this._ = utils.resetAttributes(roleOrInfo);
+                if (utils.isInfoFulfilled(this._)) utils.commitToGrants(this._grants, this._, true);
+            }
         } else if (roleOrInfo !== undefined) {
             // undefined is allowed (`roleOrInfo` can be omitted) but throw if
             // some other type is passed.
@@ -85,7 +87,7 @@ class Access {
      *  @readonly
      */
     get denied(): boolean {
-        return this._.denied;
+        return this._.denied ?? false;
     }
 
     // -------------------------------
@@ -152,6 +154,9 @@ class Access {
      *  console.log(permission.granted); // true
      */
     extend(roles: string | string[]): Access {
+        if (typeof this._.role === 'undefined') {
+            throw new AccessControlError('Role(s) must be defined before calling extend().');
+        }
         utils.extendRole(this._grants, this._.role, roles);
         return this;
     }

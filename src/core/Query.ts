@@ -1,6 +1,6 @@
-import { IQueryInfo, Permission, AccessControlError } from '../core';
-import { Action, Possession } from '../enums';
-import { utils } from '../utils';
+import { IQueryInfo, Permission, AccessControlError } from '../core/index.js';
+import { Action, Possession } from '../enums/index.js';
+import { utils } from '../utils.js';
 
 /**
  *  Represents the inner `Query` class that helps build an access information
@@ -48,7 +48,7 @@ class Query {
         } else if (utils.type(roleOrInfo) === 'object') {
             // if this is a (permission) object, we directly build attributes
             // from grants.
-            if (Object.keys(roleOrInfo).length === 0) {
+            if (roleOrInfo && Object.keys(roleOrInfo).length === 0) {
                 throw new AccessControlError('Invalid IQueryInfo: {}');
             }
             this._ = roleOrInfo as IQueryInfo;

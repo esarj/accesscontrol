@@ -20,10 +20,24 @@
  *     }
  * }
  */
+
 export interface IGrantObject {
-    [role: string]: {
-        [resource: string]: {
-            [actionAndPossesion: string]: string[];
-        }
-    }
+    [role: string]: RoleDefinition;
 }
+
+/**
+ * Defines the structure for a single resource, mapping actions to attribute arrays.
+ * e.g. { 'create:any': ['*'], 'read:any': ['*'] }
+ */
+export interface IResource {
+    [actionAndPossession: string]: string[];
+}
+
+/**
+ * Defines a role definition, which is a record of resource names mapping to
+ * their resource definitions, and can optionally include an `$extend` property.
+ */
+type RoleDefinition = {
+    [resource: string]: IResource | string[] | undefined;
+    $extend?: string[];
+};
