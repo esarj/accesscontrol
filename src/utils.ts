@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 // dep modules
