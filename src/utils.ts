@@ -1,10 +1,11 @@
 // dep modules
+// @ts-ignore
 import { Notation } from 'notation';
 
 // own modules
-import { AccessControl } from './';
-import { Action, actions, Possession, possessions } from './enums';
-import { IAccessInfo, IQueryInfo, AccessControlError } from './core';
+import { AccessControl } from './index.js';
+import { actions, Possession, possessions } from './enums/index.js';
+import { IAccessInfo, IQueryInfo, AccessControlError } from './core/index.js';
 
 /**
  *  List of reserved keywords.
@@ -29,7 +30,8 @@ const utils = {
      *  @returns {String}
      */
     type(o: any): string {
-        return Object.prototype.toString.call(o).match(/\s(\w+)/i)[1].toLowerCase();
+        const match = Object.prototype.toString.call(o).match(/\s(\w+)/i);
+        return match ? match[1].toLowerCase() : '';
     },
 
     // for later use
@@ -159,7 +161,7 @@ const utils = {
      *  @param callback
      *  @param thisArg
      */
-    each(array, callback, thisArg = null) {
+    each<T>(array: T[], callback: (item: T, index: number, arr: T[]) => any, thisArg: any = null) {
         const length = array.length;
         let index = -1;
         while (++index < length) {
@@ -168,16 +170,13 @@ const utils = {
     },
 
     /**
-     *  Iterates through the keys of the given object. Breaking out early is
-     *  possible by returning `false`.
-     *  @param object
-     *  @param callback
-     *  @param thisArg
+     * Iterates through the keys of the given object. Breaking out early is
+     * possible by returning `false`.
+     * @param object - The object to iterate over.
+     * @param callback - A function to execute for each key. Return `false` to break the loop.
+     * @param thisArg - Value to use as `this` when executing callback.
      */
-    eachKey(object, callback, thisArg = null) {
-        // return Object.keys(o).forEach(callback);
-        // forEach has no way to interrupt execution, short-circuit unless an
-        // error is thrown. so we use this:
+    eachKey(object: Record<string, any>, callback: (key: string, index: number, keys: string[]) => any, thisArg: any = null) {
         utils.each(Object.keys(object), callback, thisArg);
     },
 
@@ -185,20 +184,16 @@ const utils = {
     // AC ITERATION UTILS
     // ----------------------
 
-    eachRole(grants, callback: (role: any, roleName: string) => void) {
-        utils.eachKey(grants, (name: string) => callback(grants[name], name));
+    eachRole(grants: { [x: string]: any; }, callback: (role: any, roleName: string) => void) {
+        utils.eachKey(grants, (name: string) => { callback(grants[name], name); });
     },
 
-    /**
-     *
-     */
-    eachRoleResource(grants, callback: (role: string, resource: string, resourceDefinition: any) => void) {
-        let resources, resourceDefinition;
-        utils.eachKey(grants, (role: string) => {
-            resources = grants[role];
-            utils.eachKey(resources, (resource: string) => {
-                resourceDefinition = role[resource];
-                callback(role, resource, resourceDefinition);
+    eachRoleResource(grants: { [x: string]: any; }, callback: (roleName: string, resourceName: string, resourceDefinition: any) => void) {
+        utils.eachKey(grants, (roleName: string) => {
+            const resources = grants[roleName];
+            utils.eachKey(resources, (resourceName: string) => {
+                const resourceDefinition = resources[resourceName];
+                callback(roleName, resourceName, resourceDefinition);
             });
         });
     },
@@ -427,7 +422,7 @@ const utils = {
         }
 
         return asString
-            ? info.action + ':' + info.possession
+            ? `${info.action}:${info.possession}`
             : info;
     },
 
@@ -721,24 +716,23 @@ const utils = {
      *  @throws {Error} If `IAccessInfo` object fails validation.
      */
     commitToGrants(grants: any, access: IAccessInfo, normalizeAll: boolean = false) {
-        access = utils.normalizeAccessInfo(access, normalizeAll);
-        // console.log(access);
-        // grant.role also accepts an array, so treat it like it.
-        (access.role as string[]).forEach((role: string) => {
+        const safeAccess = utils.normalizeAccessInfo(access, normalizeAll);
+
+        (safeAccess.role as string[]).forEach((role: string) => {
             if (utils.validName(role) && !grants.hasOwnProperty(role)) {
                 grants[role] = {};
             }
 
-            let grantItem: any = grants[role];
-            let ap: string = access.action + ':' + access.possession;
-            (access.resource as string[]).forEach((res: string) => {
+            const grantItem: any = grants[role];
+            const ap: string = `${safeAccess.action}:${safeAccess.possession}`;
+            (safeAccess.resource as string[]).forEach((res: string) => {
                 if (utils.validName(res) && !grantItem.hasOwnProperty(res)) {
                     grantItem[res] = {};
                 }
                 // If possession (in action value or as a separate property) is
                 // omitted, it will default to "any". e.g. "create" —>
                 // "create:any"
-                grantItem[res][ap] = utils.toStringArray(access.attributes);
+                grantItem[res][ap] = utils.toStringArray(safeAccess.attributes);
             });
         });
     },
@@ -755,47 +749,35 @@ const utils = {
      *  @returns {string[]} - Array of union'ed attributes.
      */
     getUnionAttrsOfRoles(grants: any, query: IQueryInfo): string[] {
-        // throws if has any invalid property value
-        query = utils.normalizeQueryInfo(query);
+        const safeQuery = utils.normalizeQueryInfo(query);
+        if (typeof safeQuery.role === 'undefined') {
+            throw new AccessControlError(`Invalid role(s): ${JSON.stringify(safeQuery.role)}`);
+        }
+        const roles: string[] = utils.getFlatRoles(grants, safeQuery.role);
+        const attrsList: Array<string[]> = [];
 
-        let role;
-        let resource: string;
-        let attrsList: Array<string[]> = [];
-        // get roles and extended roles in a flat array
-        const roles: string[] = utils.getFlatRoles(grants, query.role);
-        // iterate through roles and add permission attributes (array) of
-        // each role to attrsList (array).
-        roles.forEach((roleName: string, index: number) => {
-            role = grants[roleName];
-            // no need to check role existence #getFlatRoles() does that.
+        roles.forEach((roleName: string) => {
+            const role = grants[roleName];
+            const resource: Record<string, string[]> | undefined = role[safeQuery.resource as string];
 
-            resource = role[query.resource];
             if (resource) {
                 // e.g. resource['create:own']
                 // If action has possession "any", it will also return
                 // `granted=true` for "own", if "own" is not defined.
-                attrsList.push(
-                    (resource[query.action + ':' + query.possession]
-                        || resource[query.action + ':any']
-                        || []).concat()
-                );
-                // console.log(resource, 'for:', action + '.' + possession);
+                const actionPossession = `${safeQuery.action}:${safeQuery.possession}`;
+                const actionAny = `${safeQuery.action}:any`;
+                // Explicitly provide a fallback empty array to prevent error on .concat
+                const attrs = (resource[actionPossession] || resource[actionAny] || []).concat();
+                attrsList.push(attrs);
             }
         });
 
-        // union all arrays of (permitted resource) attributes (for each role)
-        // into a single array.
-        let attrs = [];
-        const len: number = attrsList.length;
-        if (len > 0) {
-            attrs = attrsList[0];
-            let i = 1;
-            while (i < len) {
-                attrs = Notation.Glob.union(attrs, attrsList[i]);
-                i++;
-            }
+        if (attrsList.length === 0) {
+            return [];
         }
-        return attrs;
+
+        // union all arrays of attributes
+        return attrsList.reduce((acc, G_attrs) => Notation.Glob.union(acc, G_attrs));
     },
 
     /**
@@ -804,7 +786,7 @@ const utils = {
      *  @param {AccessControl} ac
      */
     lockAC(ac: AccessControl) {
-        const _ac = ac as any; // ts
+        const _ac = ac as any;
         if (!_ac._grants || Object.keys(_ac._grants).length === 0) {
             throw new AccessControlError('Cannot lock empty or invalid grants model.');
         }
