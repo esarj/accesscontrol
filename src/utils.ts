@@ -355,16 +355,13 @@ const utils = {
 
         if (type === 'object') {
             utils.eachKey(o, (roleName: string) => {
-                if (utils.validName(roleName)) { // throws on failure
-                    return utils.validRoleObject(o, roleName); // throws on failure
-                }
-                /* istanbul ignore next */
-                return false;
-                // above is redundant, previous checks will already throw on
-                // failure so we'll never need to break early from this.
+                utils.validName(roleName);
+                utils.validRoleObject(o, roleName);
             });
-            grants = o;
-        } else if (type === 'array') {
+            return o;
+        }
+
+        if (type === 'array') {
             o.forEach((item: any) => utils.commitToGrants(grants, item, true));
         } else {
             throw new AccessControlError(`${strErr} Expected an array or object.`);
