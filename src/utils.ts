@@ -732,7 +732,7 @@ export const utils = {
         const roles = utils.getFlatRoles(grants, query.role);
         // iterate through roles and add permission attributes (array) of
         // each role to attrsList (array).
-        roles.forEach((roleName: string, index: number) => {
+        roles.forEach((roleName: string, _index: number) => {
             role = grants[roleName];
             // no need to check role existence #getFlatRoles() does that.
 
