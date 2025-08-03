@@ -82,7 +82,7 @@ export const utils = {
      * (Array can be empty but no item should be an empty string.)
      * @param arr - Array to be checked.
      */
-    isFilledStringArray(arr: unknown[]): boolean {
+    isFilledStringArray(arr: unknown[] | unknown): boolean {
         if (!arr || !Array.isArray(arr)) return false;
         for (const s of arr) {
             if (typeof s !== 'string' || s.trim() === '') return false;
@@ -144,7 +144,7 @@ export const utils = {
             const sub = o[key];
             if (Array.isArray(sub)) Object.freeze(sub);
             if (utils.type(sub) === 'object') {
-                utils.deepFreeze(sub);
+                utils.deepFreeze(sub as UnknownObject);
             }
         });
         // finally freeze self
@@ -154,30 +154,31 @@ export const utils = {
     /**
      * Similar to JS .forEach, except this allows for breaking out early,
      * (before all iterations are executed) by returning `false`.
-     * @param array
-     * @param callback
-     * @param thisArg
      */
-    each(array: unknown[], callback: unknown, thisArg: unknown | null = null) {
-        const length = array.length;
-        let index = -1;
-        while (++index < length) {
-            if (callback.call(thisArg, array[index], index, array) === false) break;
+    iterateArray<T>(
+        arrayInput: T[],
+        callbackFn: (item: T, idx: number, input: T[]) => boolean | void,
+        thisContext: unknown | null = null
+    ) {
+        const len = arrayInput.length;
+        let idx = -1;
+        while (++idx < len) {
+            if (callbackFn.call(thisContext, arrayInput[idx], idx, arrayInput) === false) break;
         }
     },
 
     /**
      * Iterates through the keys of the given object. Breaking out early is
      * possible by returning `false`.
-     * @param object
-     * @param callback
-     * @param thisArg
      */
-    eachKey(object: UnknownObject, callback: unknown, thisArg: unknown | null = null) {
-    // return Object.keys(o).forEach(callback);
-    // forEach has no way to interrupt execution, short-circuit unless an
-    // error is thrown. so we use this:
-        utils.each(Object.keys(object), callback, thisArg);
+    iterateObjectKeys(
+        objectInput: UnknownObject,
+        callbackFn: (key: string, idx: number, keys: string[]) => boolean | void,
+        thisContext: unknown | null = null
+    ) {
+        // forEach has no way to interrupt execution, short-circuit unless an
+        // error is thrown. so we use this:
+        utils.iterateArray(Object.keys(objectInput), callbackFn, thisContext);
     },
 
     // ----------------------
@@ -185,7 +186,7 @@ export const utils = {
     // ----------------------
 
     eachRole(grants: IGrants, callback: (_role: IGrantsItem, roleName: string) => void) {
-        utils.eachKey(grants, (name: string) => callback(grants[name], name));
+        utils.iterateObjectKeys(grants as unknown as UnknownObject, (name: string) => callback(grants[name], name));
     },
 
     /**
@@ -195,9 +196,9 @@ export const utils = {
         let roleInfo: IGrantsItem;
         let resourceInfo: IActionAttributes;
 
-        utils.eachKey(grants, (role: string) => {
+        utils.iterateObjectKeys(grants as unknown as UnknownObject, (role: string) => {
             roleInfo = grants[role];
-            utils.eachKey(roleInfo, (resource: string) => {
+            utils.iterateObjectKeys(roleInfo as unknown as UnknownObject, (resource: string) => {
                 if (utils.validName(resource, false)) {
                     resourceInfo = roleInfo[resource] as IActionAttributes;
                     callback(role, resource, resourceInfo);
@@ -215,9 +216,9 @@ export const utils = {
      * @param info
      */
     isInfoFulfilled(info: IAccessInfo | IQueryInfo): boolean {
-        return utils.hasDefined(info, 'role')
-      && utils.hasDefined(info, 'action')
-      && utils.hasDefined(info, 'resource');
+        return 'role' in info && info.role !== undefined
+          && 'action' in info && info.action !== undefined
+          && 'resource' in info && info.resource !== undefined;
     },
 
     /**
@@ -254,7 +255,7 @@ export const utils = {
      */
     hasValidNames(list: string | string[], throwOnInvalid: boolean = true): boolean {
         let allValid = true;
-        utils.each(utils.toStringArray(list), (name: string) => {
+        utils.iterateArray(utils.toStringArray(list), (name: string) => {
             if (!utils.validName(name, throwOnInvalid)) {
                 allValid = false;
                 return false; // break out of loop
@@ -277,7 +278,8 @@ export const utils = {
             throw new AccessControlError(`Invalid resource definition.`);
         }
 
-        utils.eachKey(o as UnknownObject, (action: string) => {
+        const obj = o as UnknownObject;
+        utils.iterateObjectKeys(obj, (action: string) => {
             const s: string[] = action.split(':');
             if (actions.indexOf(s[0]) === -1) {
                 throw new AccessControlError(`Invalid action: "${action}"`);
@@ -285,7 +287,7 @@ export const utils = {
             if (s[1] && possessions.indexOf(s[1]) === -1) {
                 throw new AccessControlError(`Invalid action possession: "${action}"`);
             }
-            const perms = (o as UnknownObject)[action];
+            const perms = obj[action];
             if (!utils.isEmptyArray(perms) && !utils.isFilledStringArray(perms)) {
                 throw new AccessControlError(`Invalid resource attributes for action "${action}".`);
             }
@@ -307,7 +309,7 @@ export const utils = {
             throw new AccessControlError(`Invalid role definition.`);
         }
 
-        utils.eachKey(role, (resourceName: string) => {
+        utils.iterateObjectKeys(role as unknown as UnknownObject, (resourceName: string) => {
             if (!utils.validName(resourceName, false)) {
                 if (resourceName === '$extend') {
                     const extRoles = role.$extend as string[] ?? []; // semantics
@@ -343,7 +345,7 @@ export const utils = {
         const type = utils.type(o);
 
         if (type === 'object') {
-            utils.eachKey(o as IGrants, (roleName: string) => {
+            utils.iterateObjectKeys(o as unknown as UnknownObject, (roleName: string) => {
                 if (utils.validName(roleName)) { // throws on failure
                     return utils.validRoleObject(o as IGrants, roleName); // throws on failure
                 }
@@ -587,13 +589,13 @@ export const utils = {
     getCrossExtendingRole(grants: IGrants, roleName: string, extenderRoles: string | string[]): string | false {
         const extenders = utils.toStringArray(extenderRoles);
         let crossInherited: false | string = false;
-        utils.each(extenders, (e: string) => {
+        utils.iterateArray(extenders, (e: string) => {
             if (crossInherited || roleName === e) {
                 return false; // break out of loop
             }
 
             const inheritedByExtender = utils.getRoleHierarchyOf(grants, e);
-            utils.each(inheritedByExtender, (r: string) => {
+            utils.iterateArray(inheritedByExtender, (r: string) => {
                 if (r === roleName) {
                     // get/report the parent role
                     crossInherited = e;
@@ -777,7 +779,7 @@ export const utils = {
      * @param ac
      */
     lockAC(ac: AccessControl) {
-        const _ac = ac as unknown;
+        const _ac = ac as unknown as { _grants: UnknownObject; _isLocked: boolean };
         if (!_ac._grants || Object.keys(_ac._grants).length === 0) {
             throw new AccessControlError('Cannot lock empty or invalid grants model.');
         }
