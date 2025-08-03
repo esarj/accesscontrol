@@ -1,5 +1,5 @@
 // project deps
-import { Action, Possession } from '../enums';
+import { Action, Possession } from '../enums/index.js';
 
 /**
  * An interface that defines grant list item
