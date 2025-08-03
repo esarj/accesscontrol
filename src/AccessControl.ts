@@ -624,7 +624,10 @@ export class AccessControl {
           // to parse and normalize actionPossession string:
           const ap: string = utils.normalizeActionPossession({ action: actionPossession }, true) as string;
           // above will also validate the given actionPossession
-          delete this._grants[role][resource][ap];
+          const resourceObj = this._grants[role][resource];
+          if (resourceObj && typeof resourceObj === 'object' && !Array.isArray(resourceObj)) {
+            delete (resourceObj as IActionAttributes)[ap];
+          }
         } else {
           // this is used for AccessControl#removeResources().
           delete this._grants[role][resource];

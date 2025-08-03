@@ -89,17 +89,17 @@
   "devDependencies": {
     "@esarj/eslint-config": "github:esarj/eslint-config#feature/node-22-migration",
     "@esarj/tsconfig": "github:esarj/tsconfig#feature/node-22-migration",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^9.4.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
     "eslint": "9.32.0",
-    "jest": "^29.7.0",
-    "jest-cli": "^29.7.0",
-    "jest-config": "^29.7.0",
-    "mkdirp": "^0.5.1",
+    "jest": "^30.0.5",
+    "jest-cli": "^30.0.5",
+    "jest-config": "^30.0.5",
+    "mkdirp": "^3.0.1",
     "ncp": "^2.0.0",
-    "rimraf": "^2.6.3",
-    "ts-jest": "^29.1.5",
-    "typescript": "^5.5.2"
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "notation": "^2.0.0"

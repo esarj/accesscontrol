@@ -38,7 +38,8 @@ export const utils = {
    * @param o
    */
   type(o: unknown): string {
-    return Object.prototype.toString.call(o).match(/\s(\w+)/i)[1].toLowerCase();
+    const match = Object.prototype.toString.call(o).match(/\s(\w+)/i);
+    return match ? match[1].toLowerCase() : '';
   },
 
   /**
@@ -711,7 +712,7 @@ export const utils = {
         // If possession (in action value or as a separate property) is
         // omitted, it will default to "any". e.g. "create" —>
         // "create:any"
-        grantItem[res][ap] = utils.toStringArray(accessInfo.attributes);
+        (grantItem[res] as IActionAttributes)[ap] = utils.toStringArray(accessInfo.attributes);
       });
     });
   },
