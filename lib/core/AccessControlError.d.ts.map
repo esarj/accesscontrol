@@ -1,0 +1,1 @@
+{"version":3,"file":"AccessControlError.d.ts","sourceRoot":"","sources":["../../src/core/AccessControlError.ts"],"names":[],"mappings":"AAAA;;GAEG;AACH,qBAAa,kBAAmB,SAAQ,KAAK;IAEf,OAAO,EAAE,MAAM;IAD3B,IAAI,EAAE,MAAM,CAAwB;gBACxB,OAAO,GAAE,MAAW;CAQjD"}
