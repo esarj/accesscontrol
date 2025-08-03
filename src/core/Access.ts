@@ -36,7 +36,7 @@ export class Access {
      */
     constructor(ac: AccessControl, roleOrInfo?: string | string[] | IAccessInfo, denied: boolean = false) {
         this._ac = ac;
-        this._grants = (ac as unknown)._grants;
+        this._grants = (ac as unknown as { _grants: IGrants })._grants;
         this._.denied = denied;
 
         if (typeof roleOrInfo === 'string' || Array.isArray(roleOrInfo)) {
