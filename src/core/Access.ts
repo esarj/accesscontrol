@@ -79,8 +79,8 @@ export class Access {
      * @returns - Self instance of `Access`.
      */
     role(value: string | string[]): Access {
-    // in case chain is not terminated (e.g. `ac.grant('user')`) we'll
-    // create/commit the roles to grants with an empty object.
+        // in case chain is not terminated (e.g. `ac.grant('user')`) we'll
+        // create/commit the roles to grants with an empty object.
         utils.preCreateRoles(this._grants, value);
 
         this._.role = value;
@@ -93,7 +93,7 @@ export class Access {
      * @returns - Self instance of `Access`.
      */
     resource(value: string | string[]): Access {
-    // this will throw if any item fails
+        // this will throw if any item fails
         utils.hasValidNames(value, true);
         this._.resource = value;
         return this;
@@ -408,7 +408,12 @@ export class Access {
      * @param attributes
      * @returns - Self instance of `Access`.
      */
-    private _prepareAndCommit(action: Action, possession: Possession, resource?: string | string[], attributes?: string | string[]): Access {
+    private _prepareAndCommit(
+        action: Action,
+        possession: Possession,
+        resource?: string | string[],
+        attributes?: string | string[]
+    ): Access {
         this._.action = action;
         this._.possession = possession;
         if (resource) this._.resource = resource;
