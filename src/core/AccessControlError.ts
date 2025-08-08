@@ -1,13 +1,9 @@
 /**
- *  Error class specific to `AccessControl`.
- *  @readonly
- *  @name AccessControl.Error
- *  @class
- *  @static
+ * Error class specific to `AccessControl`.
  */
-class AccessControlError extends Error {
-    public name:string = 'AccessControlError';
-    constructor(public message:string = '') {
+export class AccessControlError extends Error {
+    override name: string = 'AccessControlError';
+    constructor(public override message: string = '') {
 
         super(message)/* istanbul ignore next */;
         // https://github.com/gotwarlost/istanbul/issues/690
@@ -16,5 +12,3 @@ class AccessControlError extends Error {
         Object.setPrototypeOf(this, AccessControlError.prototype);
     }
 }
-
-export { AccessControlError };

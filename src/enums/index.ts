@@ -1,8 +1,8 @@
-import { Action } from './Action';
-import { Possession } from './Possession';
+import { Action } from './Action.js';
+import { Possession } from './Possession.js';
 
-const actions: string[] = Object.keys(Action).map((k: string) => Action[k]);
-const possessions: string[] = Object.keys(Possession).map((k: string) => Possession[k]);
+const actions: string[] = Object.keys(Action).map(k => Action[k as keyof typeof Action]);
+const possessions: string[] = Object.keys(Possession).map(k => Possession[k as keyof typeof Possession]);
 
 export {
     Action,
