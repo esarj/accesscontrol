@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 // dep modules
-import { Notation } from 'notation';
+import * as notation from 'notation';
 
 // own modules
 import {
@@ -766,7 +766,7 @@ export const utils = {
             attrs = attrsList[0];
             let i = 1;
             while (i < len) {
-                attrs = Notation.Glob.union(attrs, attrsList[i]);
+                attrs = notation.Notation.Glob.union(attrs, attrsList[i]);
                 i++;
             }
         }
@@ -810,8 +810,8 @@ export const utils = {
         if (!Array.isArray(attributes) || attributes.length === 0) {
             return {};
         }
-        const notation = new Notation(object);
-        return notation.filter(attributes).value as UnknownObject;
+        const nt = new notation.Notation(object);
+        return nt.filter(attributes).value as UnknownObject;
     },
 
     /**
