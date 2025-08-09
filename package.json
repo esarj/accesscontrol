@@ -50,6 +50,7 @@
   },
   "scripts": {
     "deps": "ncu -i",
+    "update": "ncu -u",
     "clean": "rimraf ./lib",
     "lint": "eslint --ext .ts src",
     "lint:fix": "npm run lint -- --fix",
@@ -92,8 +93,10 @@
     "@esarj/eslint-config": "github:esarj/eslint-config#feature/node-22-migration",
     "@esarj/tsconfig": "github:esarj/tsconfig#feature/node-22-migration",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.1.0",
-    "eslint": "9.32.0",
+    "@types/lodash": "^4.17.20",
+    "@types/micromatch": "^4.0.9",
+    "@types/node": "^24.2.1",
+    "eslint": "9.33.0",
     "jest": "^30.0.5",
     "jest-cli": "^30.0.5",
     "jest-config": "^30.0.5",
@@ -104,6 +107,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "notation": "^2.0.0"
+    "lodash": "^4.17.21",
+    "micromatch": "^4.0.8"
   }
 }
