@@ -1,8 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
-// dep modules
-import * as notation from 'notation';
+import _ from 'lodash';
+import micromatch from 'micromatch';
 
 // own modules
 import {
@@ -135,8 +135,8 @@ export const utils = {
      * @param o - Object to be frozen.
      */
     deepFreeze(o: UnknownObject): UnknownObject | undefined {
-    // Object.freeze accepts also an array. But here, we only use this for
-    // objects.
+        // Object.freeze accepts also an array. But here, we only use this for
+        // objects.
         if (utils.type(o) !== 'object') return;
         const props = Object.getOwnPropertyNames(o);
         // freeze deeper before self
@@ -217,8 +217,8 @@ export const utils = {
      */
     isInfoFulfilled(info: IAccessInfo | IQueryInfo): boolean {
         return 'role' in info && info.role !== undefined
-          && 'action' in info && info.action !== undefined
-          && 'resource' in info && info.resource !== undefined;
+            && 'action' in info && info.action !== undefined
+            && 'resource' in info && info.resource !== undefined;
     },
 
     /**
@@ -373,7 +373,7 @@ export const utils = {
      * least one role.
      */
     getResources(grants: IGrants): string[] {
-    // using an object for unique list
+        // using an object for unique list
         const resources: UnknownObject = {};
         utils.eachRoleResource(grants, (role: string, resource: string, _resourceInfo: IActionAttributes) => {
             resources[resource] = null;
@@ -393,7 +393,7 @@ export const utils = {
         info: IQueryInfo | IAccessInfo | Partial<IGrantsListItem>,
         asString: boolean = false
     ): IQueryInfo | IAccessInfo | string {
-    // validate and normalize action
+        // validate and normalize action
         if (typeof info.action !== 'string') {
             // throw new AccessControlError(`Invalid action: ${info.action}`);
             throw new AccessControlError(`Invalid action: ${JSON.stringify(info)}`);
@@ -434,7 +434,7 @@ export const utils = {
             throw new AccessControlError(`Invalid IQueryInfo: ${typeof query}`);
         }
         // clone the object
-        query = { ...query};
+        query = { ...query };
         // validate and normalize role(s)
         query.role = utils.toStringArray(query.role);
         if (!utils.isFilledStringArray(query.role)) {
@@ -464,7 +464,7 @@ export const utils = {
             throw new AccessControlError(`Invalid IAccessInfo: ${typeof access}`);
         }
         // clone the object
-        let accessInfo = ({ ...access}) as IAccessInfo;
+        let accessInfo = ({ ...access }) as IAccessInfo;
         // validate and normalize role(s)
         accessInfo.role = utils.toStringArray(accessInfo.role);
         if (accessInfo.role.length === 0 || !utils.isFilledStringArray(accessInfo.role)) {
@@ -516,9 +516,9 @@ export const utils = {
      * @param roleName - Role name to be inspected.
      */
     getRoleHierarchyOf(grants: IGrants, roleName: string, _rootRole?: string): string[] {
-    // `rootRole` is for memory storage. Do NOT set it when using;
-    // and do NOT document this paramter.
-    // rootRole = rootRole || roleName;
+        // `rootRole` is for memory storage. Do NOT set it when using;
+        // and do NOT document this paramter.
+        // rootRole = rootRole || roleName;
 
         const role = grants[roleName];
         if (!role) throw new AccessControlError(`Role not found: "${roleName}"`);
@@ -625,7 +625,7 @@ export const utils = {
      * cross-inherited role.
      */
     extendRole(grants: IGrants, roles: string | string[], extenderRoles: string | string[]): void {
-    // roles cannot be omitted or an empty array
+        // roles cannot be omitted or an empty array
         roles = utils.toStringArray(roles);
         if (roles.length === 0) {
             throw new AccessControlError(`Invalid role(s): ${JSON.stringify(roles)}`);
@@ -730,7 +730,7 @@ export const utils = {
      * @param query
      */
     getUnionAttrsOfRoles(grants: IGrants, query: IQueryInfo): string[] {
-    // throws if has any invalid property value
+        // throws if has any invalid property value
         query = utils.normalizeQueryInfo(query);
 
         let role: IGrantsItem;
@@ -751,8 +751,8 @@ export const utils = {
                 // `granted=true` for "own", if "own" is not defined.
                 attrsList.push(
                     (resource[query.action + ':' + query.possession]
-            || resource[query.action + ':any']
-            || []).concat()
+                        || resource[query.action + ':any']
+                        || []).concat()
                 );
                 // console.log(resource, 'for:', action + '.' + possession);
             }
@@ -766,7 +766,7 @@ export const utils = {
             attrs = attrsList[0];
             let i = 1;
             while (i < len) {
-                attrs = notation.Notation.Glob.union(attrs, attrsList[i]);
+                attrs = utils.uniqConcat(attrs, attrsList[i]);
                 i++;
             }
         }
@@ -796,37 +796,65 @@ export const utils = {
     },
 
     // ----------------------
-    // NOTATION/GLOB UTILS
+    // GLOB/FILTER UTILS (lodash and micromatch)
     // ----------------------
-
     /**
-     * Deep clones the source object while filtering its properties by the
-     * given attributes (glob notations). Includes all matched properties and
-     * removes the rest.
-     * @param object - Object to be filtered.
-     * @param attributes - Array of glob notations.
+     * Creates a flat list of all possible dot-notation paths from an object.
+     * This is a helper function for the `filter` method.
+     * @param {UnknownObject} obj The object to analyze.
+     * @returns {string[]} An array of strings representing all leaf paths.
+     * @private
      */
-    filter(object: UnknownObject, attributes: string[]): UnknownObject {
-        if (!Array.isArray(attributes) || attributes.length === 0) {
-            return {};
+    _listPaths(obj: UnknownObject): string[] {
+        const paths: string[] = [];
+        function recurse(current: unknown, prefix: string = ''): void {
+            if (!_.isObject(current) || _.isArray(current)) {
+                return;
+            }
+            _.forOwn(current, (value, key) => {
+                const currentPath = prefix ? `${prefix}.${key}` : key;
+                if (_.isObject(value) && !_.isArray(value)) {
+                    recurse(value, currentPath);
+                } else {
+                    paths.push(currentPath);
+                }
+            });
         }
-        const nt = new notation.Notation(object);
-        return nt.filter(attributes).value as UnknownObject;
+        recurse(obj);
+        return paths;
     },
 
     /**
-     * Deep clones the source array of objects or a single object while
-     * filtering their properties by the given attributes (glob notations).
-     * Includes all matched properties and removes the rest of each object in
-     * the array.
-     * @param data - Array of objects or single object to be filtered.
-     * @param attributes - Array of glob notations.
+     * Filters an object's properties using glob patterns.
      */
-    filterAll(data: UnknownObject | UnknownObject[], attributes: string[]): UnknownObject | UnknownObject[] {
-        if (!Array.isArray(data)) {
-            return utils.filter(data, attributes);
+    filter(object: UnknownObject, attributes: string[]): UnknownObject {
+        if (!_.isObject(object) || _.isEmpty(attributes)) {
+            return {};
         }
-        return data.map((o: UnknownObject) => utils.filter(o, attributes));
+        const allPaths = this._listPaths(object);
+        const filteredPaths = micromatch(allPaths, attributes);
+        const result: UnknownObject = {};
+        for (const path of filteredPaths) {
+            const value = _.get(object, path);
+            _.set(result, path, value);
+        }
+        return result;
+    },
+
+    /**
+     * Deep clones and filters data based on attributes.
+     * @param {UnknownObject | UnknownObject[]} data - The data to filter.
+     * @param {string[]} attributes - The glob patterns to apply.
+     * @returns {UnknownObject | UnknownObject[]} The filtered data.
+     */
+    filterAll(
+        data: UnknownObject | UnknownObject[],
+        attributes: string[]
+    ): UnknownObject | UnknownObject[] {
+        if (_.isArray(data)) {
+            return data.map((o: UnknownObject) => this.filter(o, attributes));
+        }
+        return this.filter(data, attributes);
     }
 
 };
