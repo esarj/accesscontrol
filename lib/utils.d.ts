@@ -255,20 +255,22 @@ export declare const utils: {
      */
     lockAC(ac: AccessControl): void;
     /**
-     * Deep clones the source object while filtering its properties by the
-     * given attributes (glob notations). Includes all matched properties and
-     * removes the rest.
-     * @param object - Object to be filtered.
-     * @param attributes - Array of glob notations.
+     * Creates a flat list of all possible dot-notation paths from an object.
+     * This is a helper function for the `filter` method.
+     * @param {UnknownObject} obj The object to analyze.
+     * @returns {string[]} An array of strings representing all leaf paths.
+     * @private
+     */
+    _listPaths(obj: UnknownObject): string[];
+    /**
+     * Filters an object's properties using glob patterns.
      */
     filter(object: UnknownObject, attributes: string[]): UnknownObject;
     /**
-     * Deep clones the source array of objects or a single object while
-     * filtering their properties by the given attributes (glob notations).
-     * Includes all matched properties and removes the rest of each object in
-     * the array.
-     * @param data - Array of objects or single object to be filtered.
-     * @param attributes - Array of glob notations.
+     * Deep clones and filters data based on attributes.
+     * @param {UnknownObject | UnknownObject[]} data - The data to filter.
+     * @param {string[]} attributes - The glob patterns to apply.
+     * @returns {UnknownObject | UnknownObject[]} The filtered data.
      */
     filterAll(data: UnknownObject | UnknownObject[], attributes: string[]): UnknownObject | UnknownObject[];
 };
