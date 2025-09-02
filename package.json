@@ -51,7 +51,7 @@
   "scripts": {
     "deps": "ncu -i",
     "clean": "rimraf ./lib",
-    "lint": "eslint --ext .ts src",
+    "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run clean && npm run lint && mkdirp ./lib && tsc --project tsconfig.build.json",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
@@ -88,22 +88,22 @@
     "scope",
     "context"
   ],
+  "dependencies": {
+    "@esarj/notation-ts": "workspace:*"
+  },
   "devDependencies": {
     "@esarj/eslint-config": "github:esarj/eslint-config#feature/node-22-migration",
     "@esarj/tsconfig": "github:esarj/tsconfig#feature/node-22-migration",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^24.1.0",
-    "eslint": "9.32.0",
-    "jest": "^30.0.5",
-    "jest-cli": "^30.0.5",
-    "jest-config": "^30.0.5",
-    "mkdirp": "^3.0.1",
-    "ncp": "^2.0.0",
-    "rimraf": "^6.0.1",
-    "ts-jest": "^29.4.1",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "notation": "^2.0.0"
+    "@types/jest": "~30.0.0",
+    "@types/node": "^22",
+    "eslint": "~9.32.0",
+    "jest": "~30.0.5",
+    "jest-cli": "~30.0.5",
+    "jest-config": "~30.0.5",
+    "mkdirp": "~3.0.1",
+    "ncp": "~2.0.0",
+    "rimraf": "~6.0.1",
+    "ts-jest": "~29.4.1",
+    "typescript": "~5.9.2"
   }
 }
