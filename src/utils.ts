@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 // dep modules
-import { Notation } from 'notation';
+import { Notation } from '@esarj/notation-ts';
 
 // own modules
 import {
