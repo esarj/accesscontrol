@@ -89,21 +89,21 @@
     "context"
   ],
   "dependencies": {
-    "@esarj/notation-ts": "workspace:*"
+    "@esarj/notation-ts": "*"
   },
   "devDependencies": {
-    "@esarj/eslint-config": "github:esarj/eslint-config#feature/node-22-migration",
-    "@esarj/tsconfig": "github:esarj/tsconfig#feature/node-22-migration",
-    "@types/jest": "~30.0.0",
+    "@esarj/eslint-config": "github:esarj/eslint-config#feature/ITT-2958/update-package-deps-and-node",
+    "@esarj/tsconfig": "github:esarj/tsconfig#feature/ITT-2958/update-package-deps-and-node",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22",
-    "eslint": "~9.32.0",
-    "jest": "~30.0.5",
-    "jest-cli": "~30.0.5",
-    "jest-config": "~30.0.5",
-    "mkdirp": "~3.0.1",
-    "ncp": "~2.0.0",
-    "rimraf": "~6.0.1",
-    "ts-jest": "~29.4.1",
-    "typescript": "~5.9.2"
+    "eslint": "^9.32.0",
+    "jest": "^30.0.5",
+    "jest-cli": "^30.0.5",
+    "jest-config": "^30.0.5",
+    "mkdirp": "^3.0.1",
+    "ncp": "^2.0.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
   }
 }
