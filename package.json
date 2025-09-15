@@ -38,7 +38,7 @@
   "types": "./lib/index.d.ts",
   "engines": {
     "node": ">=20",
-    "npm": "^10"
+    "npm": "10"
   },
   "esarj": {
     "type": "module",
@@ -89,21 +89,21 @@
     "context"
   ],
   "dependencies": {
-    "@esarj/notation-ts": "*"
+    "@esarj/notation-ts": "file:../notation-ts"
   },
   "devDependencies": {
     "@esarj/eslint-config": "github:esarj/eslint-config#feature/ITT-2958/update-package-deps-and-node",
     "@esarj/tsconfig": "github:esarj/tsconfig#feature/ITT-2958/update-package-deps-and-node",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^22",
-    "eslint": "^9.32.0",
-    "jest": "^30.0.5",
-    "jest-cli": "^30.0.5",
-    "jest-config": "^30.0.5",
-    "mkdirp": "^3.0.1",
-    "ncp": "^2.0.0",
-    "rimraf": "^6.0.1",
-    "ts-jest": "^29.4.1",
-    "typescript": "^5.9.2"
+    "@types/jest": "30.0.0",
+    "@types/node": "22",
+    "eslint": "9.32.0",
+    "jest": "30.0.5",
+    "jest-cli": "30.0.5",
+    "jest-config": "30.0.5",
+    "mkdirp": "3.0.1",
+    "ncp": "2.0.0",
+    "rimraf": "6.0.1",
+    "ts-jest": "29.4.1",
+    "typescript": "5.9.2"
   }
 }
