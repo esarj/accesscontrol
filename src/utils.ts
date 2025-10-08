@@ -745,16 +745,29 @@ export const utils = {
             // no need to check role existence #getFlatRoles() does that.
 
             if (query.resource) {
+                // Check if the role has the resource
+                if (!role || !role[query.resource]) {
+                    // Resource doesn't exist for this role, push empty array
+                    attrsList.push([]);
+                    return; // Skip to next role
+                }
+
                 resource = role[query.resource] as IActionAttributes;
                 // e.g. resource['create:own']
                 // If action has possession "any", it will also return
                 // `granted=true` for "own", if "own" is not defined.
-                attrsList.push(
-                    (resource[query.action + ':' + query.possession]
-            || resource[query.action + ':any']
-            || []).concat()
-                );
-                // console.log(resource, 'for:', action + '.' + possession);
+                const actionKey = query.action + ':' + query.possession;
+                const anyActionKey = query.action + ':any';
+
+                // Check if the action:possession exists, then check action:any as fallback
+                if (resource && (resource[actionKey] || resource[anyActionKey])) {
+                    attrsList.push(
+                        (resource[actionKey] || resource[anyActionKey] || []).concat()
+                    );
+                } else {
+                    // No permission found for this action, push empty array
+                    attrsList.push([]);
+                }
             }
         });
 
