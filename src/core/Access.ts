@@ -125,7 +125,10 @@ export class Access {
      * console.log(permission.granted); // true
      */
     extend(roles: string | string[]): Access {
-        utils.extendRole(this._grants, this._.role as string, roles);
+        if (!this._.role) {
+            throw new AccessControlError('Cannot extend role(s) before a role is set. Call .role() first.');
+        }
+        utils.extendRole(this._grants, this._.role, roles);
         return this;
     }
 
