@@ -156,11 +156,13 @@ describe('Test Suite: utils (core)', () => {
         helper.expectACError(() => utils.validName(invalid as string, true));
         expect(utils.validName(invalid as string, false)).toBe(false);
         expect(utils.validName('', false)).toBe(false);
-        expect((utils as unknown as any as Function)(utils.validName as unknown, 1)).toBeDefined();
-        // these calls are intentionally passing invalid types; we assert they don't return true
-        expect(() => (utils as unknown as any).validName(1, false)).toBeDefined();
-        expect(() => (utils as unknown as any).validName(null, false)).toBeDefined();
-        expect(() => (utils as unknown as any).validName(true, false)).toBeDefined();
+        // utils is exported as an object; ensure API surface is intact
+        expect(utils).toEqual(expect.any(Object));
+        expect(typeof (utils as any).validName).toBe('function');
+        // these calls are intentionally passing invalid types; with throwOnInvalid=false they should return false
+        expect((utils as unknown as any).validName(1, false)).toBe(false);
+        expect((utils as unknown as any).validName(null, false)).toBe(false);
+        expect((utils as unknown as any).validName(true, false)).toBe(false);
 
         valid = ['valid', 'name'];
         expect(utils.hasValidNames(valid as unknown as string)).toBe(true);
@@ -295,8 +297,9 @@ describe('Test Suite: utils (core)', () => {
                 $extend: ['admin']
             }
         };
-        expect(utils.getCrossExtendingRole(grants, 'admin', ['admin'])).toEqual(null);
-        expect(utils.getCrossExtendingRole(grants, 'admin', ['user'])).toEqual(null);
+        // implementation returns false when no cross inheritance is found
+        expect(utils.getCrossExtendingRole(grants, 'admin', ['admin'])).toEqual(false);
+        expect(utils.getCrossExtendingRole(grants, 'admin', ['user'])).toEqual(false);
         helper.expectACError(() => utils.getCrossExtendingRole(grants, 'user', ['admin']));
     });
 

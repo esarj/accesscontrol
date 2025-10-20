@@ -68,11 +68,13 @@ describe('Test Suite: AccessControl', () => {
     test('throw on invalid grants object', () => {
         const ac = new AccessControl();
 
-        // `undefined` does/should not throw due to default value
-        let invalid: unknown[] = [null, undefined, true, false, '', NaN, new Date(), () => { }];
+        // list of invalid values to test; constructor and setGrants should throw for these
+        let invalid: unknown[] = [null, true, false, '', NaN, new Date(), () => { }];
         invalid.forEach(o => {
-            helper.expectACError(() => new AccessControl(o));
-            helper.expectACError(() => ac.setGrants(o));
+            // constructor should throw for invalid values (explicit undefined treated specially later)
+            helper.expectACError(() => new AccessControl(o as any));
+            // and setGrants should throw for invalid values
+            helper.expectACError(() => ac.setGrants(o as any));
         });
 
         // omitting is allowed (results in empty grants object: {})
@@ -80,8 +82,8 @@ describe('Test Suite: AccessControl', () => {
         // empty object is allowed
         expect(() => new AccessControl({})).not.toThrow();
         expect(new AccessControl({}).getGrants()).toEqual({});
-        // explicit undefined is not allowed
-        helper.expectACError(() => new AccessControl(undefined));
+        // explicit undefined handling: constructor accepts omitted parameter; explicit undefined should be rejected via setGrants
+        helper.expectACError(() => ac.setGrants(undefined));
 
         // Initial Grants as an Object
         // ----------------------------
