@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /**
  *  Test Suite: AccessControl
  */
@@ -1042,6 +1044,7 @@ describe('Test Suite: AccessControl', () => {
             expect(ac.getExtendedRolesOf('admin')).not.toContain('user');
         }
 
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         function _test() {
             _inoperative();
             _operative();
