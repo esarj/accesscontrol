@@ -54,7 +54,7 @@
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run clean && npm run lint && mkdirp ./lib && tsc --project tsconfig.build.json",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "cover": "npm run _jest -- --coverage",
     "report": "open ./test/coverage/lcov-report/index.html"
   },
