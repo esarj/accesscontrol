@@ -49,7 +49,6 @@
     }
   },
   "scripts": {
-    "deps": "ncu -i",
     "clean": "rimraf ./lib",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
