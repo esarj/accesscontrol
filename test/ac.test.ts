@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+// @ts-nocheck - tests intentionally pass invalid values to check runtime validation
 /**
  *  Test Suite: AccessControl
  */
@@ -68,9 +71,7 @@ describe('Test Suite: AccessControl', () => {
         // `undefined` does/should not throw due to default value
         let invalid: unknown[] = [null, undefined, true, false, '', NaN, new Date(), () => { }];
         invalid.forEach(o => {
-
             helper.expectACError(() => new AccessControl(o));
-
             helper.expectACError(() => ac.setGrants(o));
         });
 
@@ -572,9 +573,7 @@ describe('Test Suite: AccessControl', () => {
         expect(() => ac.extendRole('onur', 'admin')).toThrow();
         ac.grant('onur').extend('admin');
 
-        // @ts-ignore
         expect(ac.getGrants().onur.$extend.length).toEqual(1);
-        // @ts-ignore
         expect(ac.getGrants().onur.$extend[0]).toEqual('admin');
 
         ac.grant('role2, role3, editor, viewer, agent').createOwn('book');
@@ -1044,7 +1043,6 @@ describe('Test Suite: AccessControl', () => {
             expect(ac.getExtendedRolesOf('admin')).not.toContain('user');
         }
 
-        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         function _test() {
             _inoperative();
             _operative();
