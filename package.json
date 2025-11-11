@@ -94,9 +94,9 @@
     "@esarj/eslint-config": "github:esarj/eslint-config#feature/ITT-2958/update-package-deps-and-node",
     "@esarj/tsconfig": "github:esarj/tsconfig#feature/ITT-2958/update-package-deps-and-node",
     "@types/node": "22",
-    "eslint": "9.37.0",
+    "eslint": "9.39.1",
     "mkdirp": "3.0.1",
-    "rimraf": "6.0.1",
+    "rimraf": "6.1.0",
     "typescript": "5.9.3",
     "vitest": "4.0.8",
     "@vitest/coverage-v8": "4.0.8"
