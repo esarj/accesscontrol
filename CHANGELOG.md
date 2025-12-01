@@ -1,5 +1,10 @@
 ## AccessControl - Change Log
 
+## UNRELEASED
+
+### Changed
+- Upgraded the project runtime from Node.js 18 to Node.js 22
+
 ### v2.2.1 (2018-02-24)
 
 - **Fixed** an issue with attribute filtering caused by the core dependency Notation. Now [fixed](https://github.com/onury/notation/issues/7) and updated.
