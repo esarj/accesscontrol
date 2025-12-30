@@ -1,9 +1,10 @@
 ## AccessControl - Change Log
 
-## UNRELEASED
+## 3.0.0 (2025-12-30)
 
 ### Changed
-- Upgraded the project runtime from Node.js 18 to Node.js 22
+- Upgraded the project runtime from Node.js 18 to Node.js 22. [ITT-2958]
+- All dependencies updated to their latest versions at the time of the upgrade. [ITT-2958]
 
 ### v2.2.1 (2018-02-24)
 
