@@ -1,6 +1,6 @@
 {
   "name": "@esarj/accesscontrol",
-  "version": "2.2.1",
+  "version": "3.0.0",
   "description": "Role and Attribute based Access Control for Node.js",
   "author": "Onur Yildirim <onur@esarj.com>",
   "main": "./lib/index.js",
