@@ -685,7 +685,6 @@ describe('Test Suite: AccessControl', () => {
     });
 
     test('init with grants object with $extend (issue #22)', () => {
-    // tslint:disable
         const grants: IGrants = {
             viewer: {
                 account: {
@@ -706,7 +705,6 @@ describe('Test Suite: AccessControl', () => {
                 }
             }
         };
-        // tslint:enable
         expect(() => new AccessControl(grants)).not.toThrow();
         const ac = new AccessControl();
         expect(() => ac.setGrants(grants)).not.toThrow();
