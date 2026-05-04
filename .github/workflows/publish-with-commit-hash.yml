@@ -1,0 +1,70 @@
+name: Publish package
+
+on:
+  push:
+    branches:
+      - development
+      - devops/release-pipeline
+  workflow_dispatch:
+
+
+jobs:
+  publish:
+    runs-on: [self-hosted, staging] 
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.21.1"
+
+      - name: Prepare package.json to publish version
+        working-directory: .
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          REGISTRY: ${{ secrets.NPM_REGISTRY }}
+        run: |
+          node -e '
+          const fs = require("fs");
+          const path = "package.json";
+          const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
+
+          pkg.originalVersion = pkg.version || "1.0.0";
+          pkg.originalPrivate = Boolean(pkg.private);
+          pkg.version = `0.0.0-${process.env.COMMIT_SHA}`;
+          pkg.private = false;
+          pkg.publishConfig = {
+              registry: process.env.REGISTRY
+          };
+          fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + "\n", "utf8");
+          console.log(`Updated version to ${pkg.version}`);
+          '
+
+      - name: Configure npm registry and authentication
+        env:
+          TOKEN: ${{ secrets.NPM_TOKEN }}
+          REGISTRY: ${{ secrets.NPM_REGISTRY }}
+        run: |
+          if [ -z "${REGISTRY}" ]; then
+            echo "NPM_REGISTRY secret is missing"
+            exit 1
+          fi
+          if [ -z "${TOKEN}" ]; then
+            echo "NPM_TOKEN secret is missing"
+            exit 1
+          fi
+          echo "//${REGISTRY}/:_authToken=\"${TOKEN}\"" > ~/.npmrc
+          echo "registry=${REGISTRY}" >> ~/.npmrc
+
+
+      - name: Publish package
+        env:
+          REGISTRY: ${{ secrets.NPM_REGISTRY }}
+        working-directory: .
+        run: |
+          npm publish --registry "${{ env.REGISTRY }}" --access restricted
