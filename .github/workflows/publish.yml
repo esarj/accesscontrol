@@ -39,13 +39,14 @@ jobs:
           pkg.version = `0.0.0-${process.env.COMMIT_SHA}`;
           pkg.private = false;
           pkg.publishConfig = {
-              registry: process.env.REGISTRY
+              registry: `http://${process.env.REGISTRY}`
           };
           fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + "\n", "utf8");
           console.log(`Updated version to ${pkg.version}`);
           '
 
       - name: Configure npm registry and authentication
+        working-directory: .
         env:
           TOKEN: ${{ secrets.NPM_TOKEN }}
           REGISTRY: ${{ secrets.NPM_REGISTRY }}
@@ -58,13 +59,12 @@ jobs:
             echo "NPM_TOKEN secret is missing"
             exit 1
           fi
-          echo "//${REGISTRY}/:_authToken=\"${TOKEN}\"" > ~/.npmrc
-          echo "registry=${REGISTRY}" >> ~/.npmrc
-
+          echo "registry=http://${REGISTRY}" > .npmrc
+          echo "//${REGISTRY}/:_authToken=\"${TOKEN}\"" >> .npmrc
 
       - name: Publish package
         env:
           REGISTRY: ${{ secrets.NPM_REGISTRY }}
         working-directory: .
         run: |
-          npm publish --registry "${{ env.REGISTRY }}" --access restricted
+          npm publish --registry "http://${{ env.REGISTRY }}" --access restricted
