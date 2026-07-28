@@ -3,8 +3,7 @@ name: Publish package
 on:
   push:
     branches:
-      - development
-      - devops/release-pipeline
+      - **
   workflow_dispatch:
 
 
