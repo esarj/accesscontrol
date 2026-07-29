@@ -3,7 +3,6 @@ name: Publish package
 on:
   push:
     branches:
-      - **
       - devops/v3-project
   workflow_dispatch:
 
