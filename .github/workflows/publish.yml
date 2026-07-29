@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - **
-      - devops/release-pipeline
+      - devops/v3-project
   workflow_dispatch:
 
 
