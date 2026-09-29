@@ -3,7 +3,7 @@ name: Publish package
 on:
   push:
     branches:
-      - **
+      - devops/fleet
   workflow_dispatch:
 
 
